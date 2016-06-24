@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bundle xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://hl7.org/fhir bundle.xsd"
+	xmlns="http://hl7.org/fhir">
+ <!-- 
+    Modelo de transaccion de facturacion que transfiere el prestador al financiador determinando los valores requeridos y obligatorios 
+    segun estandar FHIR y definiciones de MAIS. Utiliza datos de ejemplo con formatos reales.
+
+    Basado en FHIR DSTU 2, actualizado con esquemas de Setiembre 2015. 
+    
+    Create: 05/2016
+    Author: Adrian C. Martinez
+    Organization: OSDE
+ --> 
+    
+    <!-- Requerido: URL definicion de la transaccion -->
+    <meta>
+        <profile value="http://mais.org.ar/fhir/ImplementationGuide/TransaccionFacturacionMais"/>
+    </meta>
+ 
+    <!-- Requerido: Por definicion de FHIR, proposito del bundle -->         
+    <type value="transaction"/>
+
+    <!-- Requerido: Identificacion del Prestador -->             
+    <entry>
+    
+	<!-- 
+	     Requerido: Por definicion schematron de MAIS, url unica por cada entry del ducumento
+	     bundle.sch: https://www.dropbox.com/sh/avd537bc7xjra3g/AABlOrNQTYQ6X1rZnP-AKm7va/FACTURACION_Y_DEBITOS/fhir-all-xsd/basic.sch?dl=0 
+	-->                 
+	<fullUrl value="Organization1"/>
+    
+        <resource>
+            <Organization>
+                <!-- Requerido: Identificador unico del objeto -->
+                <id value="O176"/>
+                
+                <!--  Requerido: OID MAIS de la Organizacion Prestadora -->
+                <identifier>
+                    <value value="2.16.840.1.113883.2.10.24.2.1.1"/>   
+                </identifier>
+            </Organization>
+        </resource>
+        
+        <!-- Opcional: Razon social de la Organizacion Prestadora-->
+        <request>
+            <!-- Requerido: por definicion de FHIR -->
+            <method value="POST"/>
+            
+            <!-- Requerido: por definicion de MAIS -->
+            <url value="HOSPITAL ALEMAN"/>
+        </request>
+    </entry>
+
+    <!-- Requerido: Identificacion del Financiador -->             
+    <entry>
+	<!-- 
+	     Requerido: Por definicion schematron de MAIS, url unica por cada entry del ducumento
+	     bundle.sch: https://www.dropbox.com/sh/avd537bc7xjra3g/AABlOrNQTYQ6X1rZnP-AKm7va/FACTURACION_Y_DEBITOS/fhir-all-xsd/basic.sch?dl=0 
+	-->                 
+	<fullUrl value="Organization2"/>
+ 	
+        <resource>
+            <Organization>
+                <!-- Requerido: Identificador unico del objeto -->
+                <id value="O57"/>
+                
+                <!-- Requerido: OID MAIS de la Organizacion Financiadora -->
+                <identifier>
+                    <value value="2.16.840.1.113883.2.10.24.2.2.6"/>
+                </identifier>
+            </Organization>
+        </resource>
+        
+        <!-- Opcional: Razon social de la Organizacion Financiadora -->
+        <request>
+            <!-- Requerido: por definicion de FHIR -->
+            <method value="POST"/>
+            
+            <!-- Requerido: por definicion de MAIS -->
+            <url value="OSDE"/>
+        </request>
+    </entry>
+    
+</Bundle>

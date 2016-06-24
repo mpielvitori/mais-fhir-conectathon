@@ -1,0 +1,7 @@
+<OperationOutcome xmlns="http://hl7.org/fhir">
+   <issue>
+      <severity value="information"/>
+      <code value="transactionId"/>
+      <diagnostics value="1"/>
+   </issue>
+</OperationOutcome>

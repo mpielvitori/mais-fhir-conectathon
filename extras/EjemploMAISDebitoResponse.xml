@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bundle xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://hl7.org/fhir fhir-all-xsd/bundle.xsd"
+    xmlns="http://hl7.org/fhir">
+    <meta>
+        <profile value="http://mais.org.ar/fhir/ImplementationGuide/TransaccionDebitoMais"/>
+    </meta>
+    <!-- Basado en FHIR DSTU 2 -->
+    <!-- Actualizado con esquemas de Setiembre 2015 
+        Según los requerimientos de la reunión 9 de MAIS
+        D01-PARA CADA ITEM DEBITADO
+        D01a- FECHA DE DEBITO
+        D01b- NRO. DE FACTURA ORIGINAL
+        D01c- IDENTIFICADOR DE ITEM/SUBITEM
+        D01d- FECHA DE PRESTACION
+        D01e- DATOS DEL AFILIADO : NRO. AFILIADO
+        D01f- NRO. DE  ACCESSION O SERVICIO INTERNO
+        D01g- CODIGO PRESENTADO
+        D01h- CODIGO LIQUIDADO
+        D01i- MOTIVO DE DEBITO Codificado
+        D01j- MOTIVO DE DEBITO Texto Libre
+        D01k- IMPORTE DEBITO->paymentAdjustment
+        D01l- ERROR
+        D02 - ORGANIZACION PRESTADORA
+        D03 - ORGANIZACION FINANCIADORA
+        
+    -->
+    <type value="transaction"> </type>
+    <!-- Identificador de la organizacion prestadora -->
+    <entry>
+        <resource>
+            <Organization>
+                <!-- Identificador Interno dentro de la Transaccion -->
+                <id value="F87E4DC7-BEFA-45D1-B336-09BE61B1AA3E"/>
+                <!-- Identificador MAIS de la Organización Prestadora -->
+                <identifier>
+                    <value value="OID_ORGANIZACION_PRESTADORA"/>
+                </identifier>
+                
+            </Organization>
+        </resource>
+        <request>
+            <method value="POST"/>
+            <url value="Organization"/>
+        </request>
+    </entry>
+    <entry>
+        <resource>
+            
+            <Organization>
+                <!-- Identificador Interno dentro de la Transaccion -->
+                <id value="C81696FE-2B56-4F77-BCED-440A727D2869"/>
+                <!-- Identificador MAIS de la Organización Financiadora -->
+                <identifier>
+                    <value value="OID_ORGANIZACION_FINANCIADORA"/>
+                </identifier>
+                
+            </Organization>
+        </resource>
+        <request>
+            <method value="POST"/>
+            <url value="Organization"/>
+        </request>
+        
+    </entry>
+    <!-- Puede haber varias repeticiones de este recurso, tantas como 
+        'renglones' de lo que antes eran nuestros archivos de intercambio
+        Este es el primer renglon
+    -->
+    <entry>
+        
+        <resource>
+            
+            <ClaimResponse>
+                <!-- Opción 1 para Claim: recursos incluidos dentro del principal 
+                     Opción 2 para Claim: si el sistema que envía el Claim guarda la referencia
+                                          generada por el financiador, directamente el url de la 
+                                          referencia. Discutir
+                                          
+                -->
+                <contained>
+                    
+                    <Claim>
+                        <id value="Claim1"></id>
+                        <!-- Tipo de Item -->
+                        <type value="institutional"/>
+                        <!-- Identificador Único del Renglón para el Prestador D01c   -->
+                        <identifier>
+                            <system value="OID_PRESTADOR\items_factura"/>
+                            <value value="20910-2"/>
+                        </identifier>
+                        <!-- Identificador : Tipo y Numero de Factura del Prestador - D01b-->
+                        <identifier>
+                            <system value="OID_PRESTADOR\nros_factura"/>
+                            <value value="B 0000-00000000"/>
+                        </identifier>
+                        <!-- Identificador : Accession del Prestador - D01f -->
+                        <identifier>
+                            <system value="OID_PRESTADOR\accessions"/>
+                            <value value="H0493823"/>
+                        </identifier>
+                        <!-- Fecha de Prestación - D01d -->
+                        <created value="2015-10-15"></created>
+                        <!-- Referencia a datos de paciente -->
+                        <patient><reference value="Pat20425239"></reference></patient>
+                    </Claim>
+                </contained>
+                <!-- Datos del paciente -->
+                <contained>
+                    <Patient>
+                        <!-- Identificador interno dentro de la transacción -->
+                        <id value="Pat20425239"/>
+                        <!-- Nro de Afiliado - D01e -->
+                        <identifier>
+                            <system value="www.prepaga.com/afiliados"/>
+                            <value value="NRO_AFILIADO"/>
+                        </identifier>
+                    </Patient>
+                    
+                </contained>
+                <!-- Referencia a Item de Factura Debitado -->
+                <request>
+                    <reference value="#Claim1"></reference>    
+                </request>
+                <!-- Fecha del Débito: D01a -->
+                <created value="2016-02-10"></created>
+                <!-- Referencia a Organizacion Financiadora -->
+                <organization>
+                    <reference value="organization/C81696FE-2B56-4F77-BCED-440A727D2869"></reference>
+                </organization>
+                <!-- Referencia a organizacion Prestadora -->
+                <requestOrganization>
+                    <reference value="organization/F87E4DC7-BEFA-45D1-B336-09BE61B1AA3E"></reference>
+                </requestOrganization>
+                
+                <!-- Resultado del Procesamiento -->
+                <outcome value="error"/>
+                <!-- Mensaje de Error o Debito para el item -->
+                <disposition value="MENSAJE DE ERROR O DEBITO"></disposition>
+                <!-- Referencia al Codigo de Facturación  -->
+                <item>
+                    
+                    <sequenceLinkId value="1"></sequenceLinkId>
+                    
+                    <!-- Codigo del Financiador para la Prestacion D01h -->
+                    <adjudication>
+                        <code>
+                           <system value="OID_FINANCIADOR/prestaciones"/>
+                           <code value="490475"/>
+                           <display value="HEMOGRAMA"/>
+                        </code>
+                    </adjudication>
+                    
+                </item>
+                <!-- Solo para Errores de Procesamiento del batch de Facturacion -->
+                <!-- Definicion de codigo de Errores en la Guia - D01l -->
+                <error>
+                    <code>
+                        <system value="http://mais.org.ar/fhir/ValueSet/ErroresTransacciones"></system>
+                        <code value="A00"></code>
+                        <display value="FALTA NUMERO DE AUTORIZACION"></display>
+                    </code>
+                </error>
+                <!-- Valor del Débito en Pesos - D01k -->
+                <paymentAdjustment>
+                    <value value="120.33"/>
+                    <unit value="ARS"></unit>
+                </paymentAdjustment>
+                <!-- Motivo del Debito -         D01i/D01j -->
+                <paymentAdjustmentReason>
+                    <system value="http://mais.org.ar/fhir/ValueSet/MotivosDebito"></system>
+                    <code value="A01"></code>
+                    <display value="NO CORRESPONDE AYUDANTE"></display>
+                </paymentAdjustmentReason>    
+                
+            </ClaimResponse>
+        </resource>    
+        <request>
+            <method value="POST"/>
+            <url value="ClaimResponse"/>
+        </request>
+    </entry>
+    
+    
+</Bundle>
+

@@ -1,0 +1,156 @@
+<Bundle xmlns="http://hl7.org/fhir">
+   <type value="transaction"/>
+   <entry>
+      <fullUrl value="http://mais.org.ar/fhir/ImplementationGuide/TransaccionDebitoMais/1"/>
+      <resource>
+         <ClaimResponse>
+            <contained>
+               <Patient>
+                  <id value="P569874"/>
+                  <modifierExtension url="http://mais.org.ar/fhir/StructureDefinition/SituacionIVAPaciente">
+                     <valueCoding>
+                        <system value="http://mais.org.ar/fhir/ValueSet/TipoIVAPaciente"/>
+                        <code value="1"/>
+                        <display value="Voluntario"/>
+                     </valueCoding>
+                  </modifierExtension>
+                  <identifier>
+                     <system value="2.16.840.1.113883.2.10.24.2.1.6.7"/>
+                     <value value="60795606402"/>
+                  </identifier>
+                  <identifier>
+                     <system value="2.16.840.1.113883.2.10.24.4.1"/>
+                     <value value="22369874"/>
+                  </identifier>
+                  <name>
+                     <family value="LARNE"/>
+                     <given value="JORGE"/>
+                  </name>
+               </Patient>
+            </contained>
+            <contained>
+               <Claim>
+                  <id value="Claim1"/>
+                  <modifierExtension url="http://mais.org.ar/fhir/StructureDefinition/Reliquidacion">
+                     <valueBoolean value="true"/>
+                  </modifierExtension>
+                  <modifierExtension url="http://mais.org.ar/fhir/StructureDefinition/ReliquidacionNumeroFactura">
+                     <valueIdentifier>
+                        <system value="2.16.840.1.113883.2.10.24.2.1.1.10"/>
+                        <value value="A 0001 12345678"/>
+                     </valueIdentifier>
+                  </modifierExtension>
+                  <type value="institutional"/>
+                  <identifier>
+                     <system value="2.16.840.1.113883.2.10.24.2.1.1.11"/>
+                     <value value="20910-2"/>
+                  </identifier>
+                  <identifier>
+                     <system value="2.16.840.1.113883.2.10.24.2.1.1.10"/>
+                     <value value="A 0001 12345679"/>
+                  </identifier>
+                  <created value="2015-09-01"/>
+                  <provider>
+                     <reference value="P650205"/>
+                  </provider>
+                  <organization>
+                     <reference value="O176"/>
+                  </organization>
+                  <priority>
+                     <system value="http://hl7.org/fhir/processpriority"/>
+                     <code value="normal"/>
+                  </priority>
+                  <referral>
+                     <reference value="P650205"/>
+                  </referral>
+                  <diagnosis>
+                     <sequence value="1"/>
+                     <diagnosis>
+                        <system value="http://hl7.org/fhir/sid/icd-10"/>
+                        <code value="E11"/>
+                        <display value="DIABETES MELLITUS TIPO 2"/>
+                     </diagnosis>
+                  </diagnosis>
+                  <patient>
+                     <reference value="P569874"/>
+                  </patient>
+                  <coverage>
+                     <sequence value="1"/>
+                     <focal value="true"/>
+                     <coverage>
+                        <reference value="OSDE 310"/>
+                     </coverage>
+                     <relationship>
+                        <system value="http://mais.org.ar/fhir/ValueSet/RelacionBenef"/>
+                        <code value="T"/>
+                        <display value="TITULAR"/>
+                     </relationship>
+                     <preAuthRef value="12 209111 2"/>
+                     <originalRuleset>
+                        <system value="http://mais.org.ar/fhir/ValueSet/NormasFacturacion"/>
+                        <code value="NN"/>
+                        <display value="NORMAS NOMENCLADOR NACIONAL"/>
+                     </originalRuleset>
+                  </coverage>
+                  <item>
+                     <modifierExtension url="http://mais.org.ar/fhir/StructureDefinition/ValorHonorarios">
+                        <valueDecimal value="12.33"/>
+                     </modifierExtension>
+                     <modifierExtension url="http://mais.org.ar/fhir/StructureDefinition/ValorGastos">
+                        <valueDecimal value="30.25"/>
+                     </modifierExtension>
+                     <modifierExtension url="http://mais.org.ar/fhir/StructureDefinition/ImporteGravado">
+                        <valueDecimal value="32.58"/>
+                     </modifierExtension>
+                     <modifierExtension url="http://mais.org.ar/fhir/StructureDefinition/ImporteExento">
+                        <valueDecimal value="0.00"/>
+                     </modifierExtension>
+                     <sequence value="1"/>
+                     <type>
+                        <system value="2.16.840.1.113883.2.10.24.2.1.1.12"/>
+                        <code value="475"/>
+                        <display value="HEMOGRAMA"/>
+                     </type>
+                     <service>
+                        <system value="2.16.840.1.113883.2.10.24.2.2.6.12"/>
+                        <code value="490475"/>
+                        <display value="HEMOGRAMA"/>
+                     </service>
+                     <serviceDate value="2015-02-20"/>
+                     <quantity>
+                        <value value="1"/>
+                     </quantity>
+                     <net>
+                        <value value="12.35"/>
+                        <unit value="ARS"/>
+                     </net>
+                     <detail>
+                        <sequence value="1"/>
+                        <type>
+                           <system value="http://mais.org.ar/fhir/ValueSet/TipoArancelCodigo"/>
+                           <code value="A"/>
+                           <display value="ANESTESISTA"/>
+                        </type>
+                        <service>
+                           <system value="http://mais.org.ar/fhir/ValueSet/DiferencialServicio"/>
+                           <code value="1"/>
+                           <display value="AMBULATORIO"/>
+                        </service>
+                        <quantity>
+                           <value value="1"/>
+                        </quantity>
+                        <net>
+                           <value value="12.85"/>
+                           <unit value="ARS"/>
+                        </net>
+                     </detail>
+                  </item>
+               </Claim>
+            </contained>
+            <request>
+               <reference value="#Claim1"/>
+            </request>
+         </ClaimResponse>
+      </resource>
+   </entry>
+</Bundle>

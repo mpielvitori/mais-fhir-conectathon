@@ -1,0 +1,9 @@
+<!-- Parámetros por QueryString -->
+<con:parameters>
+  <con:entry key="Authorization" value="Bearer"/> 				<!-- HEADER -->
+  <con:entry key="client_secret" value="oauth2_client_secret"/> <!-- QUERY -->
+  <con:entry key="grant_type" value="password"/> 				<!-- QUERY -->
+  <con:entry key="client_id" value="oauth2_client_id"/> 		<!-- QUERY -->
+  <con:entry key="username" value="usuario_prestador"/> 		<!-- QUERY -->
+  <con:entry key="password" value="passwd_prestador"/> 			<!-- QUERY -->
+</con:parameters>
