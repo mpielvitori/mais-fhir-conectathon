@@ -1,0 +1,31 @@
+<Bundle xmlns="http://hl7.org/fhir">
+   <type value="transaction"/>
+   <entry>
+      <fullUrl value="http://mais.org.ar/fhir/TransaccionMais/Prestador"/>
+      <resource>
+         <Organization xmlns="http://hl7.org/fhir">
+            <id value="Organization1"/>
+            <identifier>
+               <value value="2.16.840.1.113883.2.10.24.2.1.1"/>
+            </identifier>
+         </Organization>
+      </resource>
+   </entry>
+   <entry>
+      <fullUrl value="http://mais.org.ar/fhir/TransaccionMais/Financiador"/>
+      <resource>
+         <Organization xmlns="http://hl7.org/fhir">
+            <id value="Organization2"/>
+            <identifier>
+               <value value="2.16.840.1.113883.2.10.24.2.2.6"/>
+            </identifier>
+         </Organization>
+      </resource>
+   </entry>
+   <entry>
+      <fullUrl value="http://mais.org.ar/fhir/ValueSet/EstadoTramites"/>
+      <response>
+         <status value="2"/>
+      </response>
+   </entry>
+</Bundle>

@@ -2,7 +2,7 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
   <display-name>mais-fhir-conectathon</display-name>
  
-  <context-param>
+   <context-param>
     <param-name>resteasy.scan</param-name>
     <param-value>true</param-value>
   </context-param>
@@ -16,13 +16,64 @@
 	<listener>
 		<listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
 	</listener>
-  <servlet>
+<!--   <servlet>
     <servlet-name>resteasy-servlet</servlet-name>
     <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
-  </servlet>  
-  <servlet-mapping>
+  </servlet>   -->
+<!--   <servlet-mapping>
     <servlet-name>resteasy-servlet</servlet-name>
     <url-pattern>/*</url-pattern>
-  </servlet-mapping>
+  </servlet-mapping> -->
+<!-- <context-param>
+    <param-name>resteasy.providers</param-name>
+    <param-value>
+      io.swagger.jaxrs.listing.ApiListingResource,
+      io.swagger.jaxrs.listing.SwaggerSerializers,
+      org.mais.fhir.endpoint.ConectathonEndpoint
+    </param-value>
+  </context-param>
+   <servlet>
+        <servlet-name>Jersey2Config</servlet-name>
+        <servlet-class>io.swagger.jaxrs.config.DefaultJaxrsConfig</servlet-class>
+        <init-param>
+            <param-name>api.version</param-name>
+            <param-value>1.0.0</param-value>
+        </init-param>
+        <init-param>
+            <param-name>swagger.api.basepath</param-name>
+            <param-value>http://localhost:9090/mais-fhir-conectathon-1.0.0-SNAPSHOT</param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>   -->
+<!--     <servlet>
+        <servlet-name>Bootstrap</servlet-name>
+        <servlet-class>swagger.Bootstrap</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet> -->
+    
+    <servlet>
+        <servlet-name>resteasy</servlet-name>
+        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+        <!-- Configure Swagger context -->
+         <init-param>
+            <param-name>javax.ws.rs.Application</param-name>
+            <param-value>swagger.MAISApplication</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>resteasy</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
 
+	<!-- Swagger cross origin filter -->
+    <filter>
+        <filter-name>ApiOriginFilter</filter-name>
+        <filter-class>swagger.ApiOriginFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>ApiOriginFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 </web-app>

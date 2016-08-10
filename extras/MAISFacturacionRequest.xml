@@ -28,7 +28,7 @@
 	     Requerido: Por definicion schematron de MAIS, url unica por cada entry del ducumento
 	     bundle.sch: https://www.dropbox.com/sh/avd537bc7xjra3g/AABlOrNQTYQ6X1rZnP-AKm7va/FACTURACION_Y_DEBITOS/fhir-all-xsd/basic.sch?dl=0 
 	-->                 
-	<fullUrl value="Organization1"/>
+	<fullUrl value="http://mais.org.ar/fhir/TransaccionMais/Prestador"/>
     
         <resource>
             <Organization>
@@ -58,7 +58,7 @@
 	     Requerido: Por definicion schematron de MAIS, url unica por cada entry del ducumento
 	     bundle.sch: https://www.dropbox.com/sh/avd537bc7xjra3g/AABlOrNQTYQ6X1rZnP-AKm7va/FACTURACION_Y_DEBITOS/fhir-all-xsd/basic.sch?dl=0 
 	-->                 
-	<fullUrl value="Organization2"/>
+	<fullUrl value="http://mais.org.ar/fhir/TransaccionMais/Financiador"/>
  	
         <resource>
             <Organization>
@@ -120,7 +120,7 @@
                         <!-- Requerido: Numero de afiliado Financiador -->
                         <identifier>
                             <!-- Requerido: Identificacion identifier - OID_del_financiador_afiliados -->
-                            <system value="2.16.840.1.113883.2.10.24.2.1.6.7"/>
+                            <system value="2.16.840.1.113883.2.10.24.2.2.6.7"/>
                             
                             <!-- Requerido: Numero de Afiliado -->
                             <value value="60795606402"/>

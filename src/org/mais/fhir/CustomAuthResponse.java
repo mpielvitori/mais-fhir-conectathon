@@ -3,7 +3,7 @@ package org.mais.fhir;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
+@XmlRootElement(name="OAuthResponse")
 public class CustomAuthResponse {	
 	
 	private String accessToken;    

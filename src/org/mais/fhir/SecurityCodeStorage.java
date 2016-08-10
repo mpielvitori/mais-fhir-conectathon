@@ -13,6 +13,7 @@ import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
 import ca.uhn.fhir.model.dstu2.resource.Claim;
 import ca.uhn.fhir.model.dstu2.resource.ClaimResponse;
+import ca.uhn.fhir.model.dstu2.resource.Organization;
 
 /**
  * Simula un storage con scope app
@@ -51,8 +52,8 @@ public class SecurityCodeStorage {
 //		return authCodes.contains(authCode);
 //	}
 
-	public Integer addClaimResponses(String token, Set<ClaimResponse> claims){
-		TransactionFacturacionEntity transaction = new TransactionFacturacionEntity.Builder().claimResponses(claims).build();
+	public Integer addClaimResponses(String token, Set<ClaimResponse> claims, Organization prestador, Organization financiera, ServerParams.StatusEnum status){
+		TransactionFacturacionEntity transaction = new TransactionFacturacionEntity.Builder().claimResponses(claims).prestador(prestador).financiera(financiera).status(status).build();
 		
 		userTransactions.get(token).add(transaction);
 		
@@ -90,90 +91,125 @@ public class SecurityCodeStorage {
 		return claims;
 	}	
 	
-	public Set<ClaimResponse> getClaimResponses(String token, Date fechaDesde, Date fechaHasta){
-		Set<ClaimResponse> claims = new HashSet<ClaimResponse>();
+	public Set<TransactionFacturacionEntity> getClaimResponses(String token, Date fechaDesde, Date fechaHasta){
+		Set<TransactionFacturacionEntity> transactions = new HashSet<TransactionFacturacionEntity>();
 		for (TransactionFacturacionEntity transactionClaim : userTransactions.get(token)){
+			//Si es pendiente no tiene fecha de creación y no lo agrego porque no tengo contra que comparar
+//			if (ServerParams.StatusEnum.PENDIENTE.getValue() == transactionClaim.getStatus().getValue()){
+//				continue;
+//			}	
+			boolean agrego = false;
+			//Creo un transaction sólo con los ClaimResponse de las factura que coincidan con el rango buscado
+			Set<ClaimResponse> claims = new HashSet<ClaimResponse>();
 			for (ClaimResponse claimResponse : transactionClaim.getClaimResponses()){
 				if (fechaDesde.compareTo(claimResponse.getCreated()) <= 0 && fechaHasta.compareTo(claimResponse.getCreated()) >= 0){				
-					claims.add(claimResponse);					
+					claims.add(claimResponse);
+					agrego = true;
 				}
-			}			
+			}
+			//Compruebo si agregó un claim para el rango consultado
+			if (agrego){
+				TransactionFacturacionEntity transactionFactura = new TransactionFacturacionEntity.Builder().claimResponses(claims).prestador(transactionClaim.getPrestador()).financiera(transactionClaim.getFinanciera()).status(transactionClaim.getStatus()).transientInsance(true).build();
+				transactionFactura.setTransactionId(transactionClaim.getTransactionId());
+				transactions.add(transactionFactura);
+			}
 		}		
-		return claims;
-	}
-
-	public Set<ClaimResponse> getClaimResponsesDesde(String token, Date fechaDesde){
-		Set<ClaimResponse> claims = new HashSet<ClaimResponse>();
-		for (TransactionFacturacionEntity transactionClaim : userTransactions.get(token)){
-			for (ClaimResponse claimResponse : transactionClaim.getClaimResponses()){
-				if (fechaDesde.compareTo(claimResponse.getCreated()) <= 0){				
-					claims.add(claimResponse);					
-				}
-			}			
-		}		
-		return claims;
+		return transactions;
 	}
 	
-	public Set<ClaimResponse> getClaimResponsesHasta(String token, Date fechaHasta){
-		Set<ClaimResponse> claims = new HashSet<ClaimResponse>();
-		for (TransactionFacturacionEntity transactionClaim : userTransactions.get(token)){
-			for (ClaimResponse claimResponse : transactionClaim.getClaimResponses()){
-				if (fechaHasta.compareTo(claimResponse.getCreated()) >= 0){				
-					claims.add(claimResponse);					
-				}
-			}			
-		}		
-		return claims;
-	}
+//	public Set<ClaimResponse> getClaimResponsesDesde(String token, Date fechaDesde){
+//		Set<ClaimResponse> claims = new HashSet<ClaimResponse>();
+//		for (TransactionFacturacionEntity transactionClaim : userTransactions.get(token)){
+//			for (ClaimResponse claimResponse : transactionClaim.getClaimResponses()){
+//				if (fechaDesde.compareTo(claimResponse.getCreated()) <= 0){				
+//					claims.add(claimResponse);					
+//				}
+//			}			
+//		}		
+//		return claims;
+//	}
+//	
+//	public Set<ClaimResponse> getClaimResponsesHasta(String token, Date fechaHasta){
+//		Set<ClaimResponse> claims = new HashSet<ClaimResponse>();
+//		for (TransactionFacturacionEntity transactionClaim : userTransactions.get(token)){
+//			for (ClaimResponse claimResponse : transactionClaim.getClaimResponses()){
+//				if (fechaHasta.compareTo(claimResponse.getCreated()) >= 0){				
+//					claims.add(claimResponse);					
+//				}
+//			}			
+//		}		
+//		return claims;
+//	}
 
-	public Set<ClaimResponse> getClaimResponsesTransaccion(String token, Integer transaccionId){
-		Set<ClaimResponse> claims = new HashSet<ClaimResponse>();
+	public Set<TransactionFacturacionEntity> getClaimResponsesTransaccion(String token, Integer transaccionId){
+		Set<TransactionFacturacionEntity> transactions = new HashSet<TransactionFacturacionEntity>();
 		for (TransactionFacturacionEntity transactionClaim : userTransactions.get(token)){
 			if (transactionClaim.getTransactionId().intValue() == transaccionId)
-				claims.addAll(transactionClaim.getClaimResponses());
+				transactions.add(transactionClaim);
 		}		
-		return claims;
-	}
-
-	public Set<ClaimResponse> getClaimResponsesNroFactura(String token, String nroFactura){
-		Set<ClaimResponse> claims = new HashSet<ClaimResponse>();
-		for (TransactionFacturacionEntity transactionClaim : userTransactions.get(token)){
-			for (ClaimResponse claimResponse : transactionClaim.getClaimResponses()){
-				String nroFacturaOID = claimResponse.getOrganization().getDisplay().getValue() + ServerParams.OID_NRO_FACTURA_ID;
-				for (IdentifierDt identifier : claimResponse.getIdentifier()){
-					if (nroFacturaOID.equals(identifier.getSystem())){
-						if (nroFactura.equals(identifier.getValue())){
-							claims.add(claimResponse);
-							break;
-						}
-					}							
-				}
-			}			
-		}		
-		return claims;
+		return transactions;
 	}
 	
-	/* NRO_FACTURA EN CLAIM
-	 * public Set<ClaimResponse> getClaimResponsesNroFactura(String token, String nroFactura){
-		Set<ClaimResponse> claims = new HashSet<ClaimResponse>();
+	public Set<TransactionFacturacionEntity> getClaimResponsesNroFactura(String token, String nroFactura){
+		Set<TransactionFacturacionEntity> transactions = new HashSet<TransactionFacturacionEntity>();
 		for (TransactionFacturacionEntity transactionClaim : userTransactions.get(token)){
-			for (ClaimResponse claimResponse : transactionClaim.getClaimResponses()){				
+			for (ClaimResponse claimResponse : transactionClaim.getClaimResponses()){
+				String nroFacturaOID = transactionClaim.getPrestador().getIdentifier().get(0).getValue() + "." + ServerParams.OID_NRO_FACTURA_ID;
+				//Nro de factura dentro de Claim
 				for (IResource resource : claimResponse.getContained().getContainedResources()){
 					if (resource instanceof Claim){
 						Claim claim = (Claim) resource;
 						for (IdentifierDt identifier : claim.getIdentifier()){
-							if (ServerParams.OID_NRO_FACTURA.equals(identifier.getSystem())){
-								if (nroFactura.equals(identifier.getValue())){
+							if (nroFacturaOID.equals(identifier.getSystem())){
+								if (nroFactura != null && nroFactura.equals(identifier.getValue())){
+									//Creo un transaction sólo con el ClaimResponse de la factura buscada
+									Set<ClaimResponse> claims = new HashSet<ClaimResponse>();
 									claims.add(claimResponse);
+									TransactionFacturacionEntity transactionFactura = new TransactionFacturacionEntity.Builder().claimResponses(claims).prestador(transactionClaim.getPrestador()).financiera(transactionClaim.getFinanciera()).status(transactionClaim.getStatus()).transientInsance(true).build();
+									transactionFactura.setTransactionId(transactionClaim.getTransactionId());
+									transactions.add(transactionFactura);
 									break;
 								}
 							}							
 						}
 					}
 				}	
+				//Nro de factura dentro de Claim Response(para esto hay que crear un IdentifierDt al agregar los ClaimResponse)				
+//				for (IdentifierDt identifier : claimResponse.getIdentifier()){
+//					if (nroFacturaOID.equals(identifier.getSystem())){
+//						if (nroFactura.equals(identifier.getValue())){
+//							//Creo un transaction sólo con el ClaimResponse de la factura buscada
+//							Set<ClaimResponse> claims = new HashSet<ClaimResponse>();
+//							claims.add(claimResponse);
+//							TransactionFacturacionEntity transactionFactura = new TransactionFacturacionEntity.Builder().claimResponses(claims).prestador(transactionClaim.getPrestador()).financiera(transactionClaim.getFinanciera()).status(transactionClaim.getStatus()).build();
+//							transactions.add(transactionFactura);
+//							break;
+//						}
+//					}							
+//				}
 			}			
 		}		
-		return claims;
-	}*/
+		return transactions;
+	}
+
+	//Tomo Organización de primer request enviado con el token
+	//Reemplazar con valor seteado al autenticar Prestador
+	@Deprecated
+	public Organization getPrestador(String token){
+		for (TransactionFacturacionEntity transactionClaim : userTransactions.get(token)){
+			return transactionClaim.getPrestador();
+		}
+		return null;
+	}
+
+	//Tomo Organización de primer request enviado con el token
+	@Deprecated
+	public Organization getFinanciera(String token){
+		for (TransactionFacturacionEntity transactionClaim : userTransactions.get(token)){
+			return transactionClaim.getFinanciera();
+		}
+		return null;
+	}
+
 
 }
