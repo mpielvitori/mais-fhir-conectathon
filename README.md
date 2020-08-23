@@ -7,3 +7,7 @@
 * Schema validator **Apache Phloc Schematron**
 * Logging **SLF4J**
 * [MAIS resources](https://github.com/mpielvitori/mais-fhir-resources-dstu2)
+
+### Referencias
+* [MAIS](https://www.mais.org.ar) 
+* [Recomendaciones de Arquitectura](https://wiki.mais.org.ar/doku.php?id=recomendaciones_de_arquitectura)
